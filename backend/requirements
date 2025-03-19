@@ -1,0 +1,16 @@
+flask
+flask_cors
+flask_pymongo
+flask_bcrypt
+flask_jwt_extended
+python-dotenv
+pillow
+PyMuPDF
+pandas
+xlsxwriter
+google-auth
+google-auth-oauthlib
+google-auth-httplib2
+requests
+openpyxl
+flair
