@@ -42,7 +42,7 @@ We warmly welcome contributions from the open-source community to further enhanc
 
 ## License
 
-This project is licensed under the [Specify your license here, e.g., Apache 2.0 License]. Please see the `LICENSE` file in the repository for more information.
+This project is licensed under the MIT License . Please see the `LICENSE` file in the repository for more information.
 
 ## Contact
 
