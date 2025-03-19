@@ -1,4 +1,7 @@
-# Judge AI (JAi): An Open-Source Smart System for Legal Document Processing
+![template](https://github.com/user-attachments/assets/f11091e8-2623-425d-8674-3a4a3eda8dd2)
+<br>
+<p align="center">The sweet spot between the low/no code and “starting from scratch” for CRUD-heavy applications.
+Refine is as an open source, React meta-framework for enterprise. It provides a headless solution for everything from admin panels to dashboards and internal tools.</p>
 
 ![GitHub Repo stars](https://img.shields.io/github/stars/IAI-CAIR/judge-ai)
 ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/IAI-CAIR/judge-ai)
