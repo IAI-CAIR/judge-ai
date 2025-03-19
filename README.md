@@ -1,8 +1,8 @@
 # Judge AI (JAi): An Open-Source Smart System for Legal Document Processing
 
-![GitHub stars](https://img.shields.io/github/stars/pragyananda/judge-ai)
-![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/pragyananda/judge-ai)
-![License](https://img.shields.io/github/license/pragyananda/judge-ai)
+![GitHub Repo stars](https://img.shields.io/github/stars/IAI-CAIR/judge-ai)
+![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/IAI-CAIR/judge-ai)
+![GitHub License](https://img.shields.io/github/license/IAI-CAIR/judge-ai)
 
 ## Introduction
 
