@@ -1,38 +1,20 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
-import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer, toast } from "react-toastify";
-
+import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google"; // Import GoogleLogin
 import { api } from "../api/api";
+import { register, signin } from "../utility/helper";
+import { useSocket } from "../utility/Auth";
 
 
-function Auth({ onLogin }) {
+export default function Auth({ onLogin }) {
   const navigate = useNavigate();
   const [isSignup, setIsSignup] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("test@gmail.com");
   const [password, setPassword] = useState("testtest");
-  const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const [redirectMessage, setRedirectMessage] = useState("");
-
-  const location = useLocation();
-  useEffect(() => {
-    if (location.state?.message) {
-      toast.warn(location.state.message, {
-        position: "top-right",
-        autoClose: 3000, // Auto hide after 3 seconds
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        theme: "colored",
-      });
-    }
-  }, [location.state]);
-
+  const { login, error, setError } = useSocket();
   const handleAuth = async (e) => {
     e.preventDefault();
     setError("");
@@ -40,34 +22,40 @@ function Auth({ onLogin }) {
 
     try {
       if (isSignup) {
-        const response = await axios.post(`${api}/api/register`, {
-          name,
-          email,
-          password,
-        });
+        register({ email, password, name })
+          .then((data) => {
+            if (data && data.error) {
+              console.log(data.error);
+            } else {
+              navigate("/login");
+              setSuccess("Signup successful! Please log in.");
+              setIsSignup(false);
+            }
+          })
+          .catch((err) => {
+            console.log("Error in Sign up", err);
+          });
 
-        if (response.data.access_token) {
-          localStorage.setItem("token", response.data.access_token);
-          localStorage.setItem("userProfile", JSON.stringify(response.data.userProfile));
+        // if (response.data.access_token) {
+        //   localStorage.setItem("token", response.data.access_token);
+        //   localStorage.setItem("userProfile", JSON.stringify(response.data.userProfile));
 
-          onLogin(response.data.access_token, response.data.userProfile);
-          navigate("/dashboard");
-        }
-        setSuccess("Signup successful! Please log in.");
-        setIsSignup(false);
+        //   onLogin(response.data.access_token, response.data.userProfile);
+        //   navigate("/dashboard");
+        // }
       } else {
-        const response = await axios.post(`${api}/api/login`, {
-          email,
-          password,
-        });
-
-        if (response.data.access_token) {
-          localStorage.setItem("token", response.data.access_token);
-          onLogin(response.data.access_token); // Pass the token to parent
-          navigate("/dashboard"); // ✅ Navigate immediately after login
-        } else {
-          setError("Invalid login credentials");
-        }
+        signin({ email, password })
+          .then((data) => {
+            if (data && data.error) {
+              setError("Invalid login credentials");
+            } else {
+              login(data);
+              onLogin(data.access_token);
+              navigate("/dashboard");
+            }
+          }
+          )
+          .catch((err) => console.log("Signin request failed", err));
       }
     } catch (err) {
       console.log("error ", err);
@@ -112,16 +100,7 @@ function Auth({ onLogin }) {
 
           <form onSubmit={handleAuth} className="md:max-w-md w-full mx-auto">
             <div className="mb-8 text-center">
-              <ToastContainer
-                className="w-[300px] sm:w-[450px]" // Adjust width
-                toastClassName={() =>
-                  "relative flex p-4 min-h-[60px] w-full rounded-lg shadow-lg bg-yellow-300 text-red-800"
-                }
-                bodyClassName="text-sm font-medium"
-                progressClassName="bg-blue-900"
-              />
-
-              <h3 className="text-4xl font-bold text-blue-600">
+              <h3 className="text-4xl font-bold text-cyan-600">
                 {isSignup ? "Sign Up" : "Sign In"}
               </h3>
             </div>
@@ -137,7 +116,7 @@ function Auth({ onLogin }) {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
-                  className="w-full text-sm border-b border-gray-300 focus:border-blue-600 px-2 py-3 outline-none"
+                  className="w-full text-sm border-b border-gray-300 focus:border-cyan-600 px-2 py-3 outline-none"
                   placeholder="Full Name"
                 />
               </div>
@@ -150,7 +129,7 @@ function Auth({ onLogin }) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full text-sm border-b border-gray-300 focus:border-blue-600 px-2 py-3 outline-none"
+                className="w-full text-sm border-b border-gray-300 focus:border-cyan-600 px-2 py-3 outline-none"
                 placeholder="Enter Email"
               />
             </div>
@@ -162,7 +141,7 @@ function Auth({ onLogin }) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full text-sm border-b border-gray-300 focus:border-blue-600 px-2 py-3 outline-none"
+                className="w-full text-sm border-b border-gray-300 focus:border-cyan-600 px-2 py-3 outline-none"
                 placeholder="Enter Password"
               />
             </div>
@@ -170,7 +149,7 @@ function Auth({ onLogin }) {
             <div className="mt-8">
               <button
                 type="submit"
-                className="w-full shadow-xl py-2.5 px-4 text-sm font-semibold tracking-wide rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none"
+                className="w-full shadow-xl py-2.5 px-4 text-sm font-semibold tracking-wide rounded-md text-white bg-cyan-600 hover:bg-cyan-700 focus:outline-none"
               >
                 {isSignup ? "Register" : "Sign In"}
               </button>
@@ -182,7 +161,7 @@ function Auth({ onLogin }) {
                 <button
                   type="button"
                   onClick={() => setIsSignup(!isSignup)}
-                  className="text-blue-600 font-semibold hover:underline ml-1"
+                  className="text-cyan-600 font-semibold hover:underline ml-1"
                 >
                   {isSignup ? "Login here" : "Register here"}
                 </button>
@@ -201,5 +180,3 @@ function Auth({ onLogin }) {
     </div>
   );
 }
-
-export default Auth;

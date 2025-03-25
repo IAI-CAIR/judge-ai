@@ -25,7 +25,7 @@ def get_excel_data(book_id):
     
     user_upload = mongo.db.uploads.find_one(
         {"_id": book_object_id, "user_id": user_id},
-        {"_id": 0, "structured_data_path": 1, "fileUrl":1}
+        {"_id": 0, "structured_data_path": 1}
     )
 
     print("MongoDB Query Result:", user_upload)
@@ -35,16 +35,10 @@ def get_excel_data(book_id):
         return jsonify({"error": "Book not found"}), 404
 
     structured_data_path = user_upload.get("structured_data_path")
-    fileUrl = user_upload.get("fileUrl")
-    print("fileUrl", fileUrl)
     
     if not structured_data_path:
         print("❌ No structured data path in database!")
         return jsonify({"error": "No structured data available"}), 404
-    
-    if not fileUrl:
-        print("❌ No fileUrl in database!")
-        return jsonify({"error": "No fileUrl available"}), 404
 
     try:
         with open(structured_data_path, "r", encoding="utf-8") as json_file:
@@ -78,7 +72,7 @@ def export_excel():
         return jsonify({"error": "No structured data found"}), 404
 
     structured_data_path = user_upload.get("structured_data_path")
-    original_filename = user_upload.get("filename", "structured_data")
+    original_filename = user_upload.get("filename", "structured_data")  # Default if missing
 
     if not structured_data_path or not os.path.exists(structured_data_path):
         return jsonify({"error": "Structured data file not found"}), 404

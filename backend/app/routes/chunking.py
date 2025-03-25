@@ -60,11 +60,11 @@ def process_and_get_chunks(file_path: str, unique_folder: str, filename: str) ->
                 chunks_with_sources.append((chunk_id, chunk, page_url))
                                
                 
-                # socketio.emit("progress_update", {
-                #     "chunk_id": chunk_id,
-                #     "page_number": page_num,
-                #     "message": f"Chunk {chunk_id} extracted from page {page_num}"
-                # })
+                socketio.emit("progress_update", {
+                    "chunk_id": chunk_id,
+                    "page_number": page_num,
+                    "message": f"Chunk {chunk_id} extracted from page {page_num}"
+                })
 
                 chunk_id += 1  
                 

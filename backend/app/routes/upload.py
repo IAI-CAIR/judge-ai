@@ -6,22 +6,22 @@ from ..extensions import mongo, socketio
 from flask_socketio import emit
 from .data import get_excel_data
 import os
+import datetime
 from .chunking import process_and_get_chunks
 import requests
 import json
 import csv
 from datetime import datetime
+import json
 import sys
 import time
 from bson import ObjectId 
-from dotenv import load_dotenv
-import os
 
-load_dotenv()
 
-LLM_URL = os.getenv("LLM_URL")
-BASE_URL = os.getenv("BASE_URL")
 
+
+LLM_URL = "http://192.168.1.104:5001/generate/local"
+BASE_URL = "http://192.168.1.12:5000/api/uploads/"
 
 bp = Blueprint("upload", __name__, url_prefix="/api")
 
@@ -41,7 +41,7 @@ def upload_pdf():
     filename = secure_filename(file.filename)
     book_name, file_extension = os.path.splitext(filename)  
 
-    first_word = book_name.split(" ")[0] if book_name else "book"
+    first_word = book_name.split()[0] if book_name else "book"
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
@@ -54,20 +54,20 @@ def upload_pdf():
     file_path = os.path.join(book_folder, filename)
     file.save(file_path)
     
-    book_id = str(ObjectId())
-    socketio.emit("upload_status", {"message": f"File {filename} uploaded successfully!","book_id": book_id})
+    socketio.emit("progress_update", {"message": f"File {filename} uploaded successfully!"})
 
     try:
         preview_filename = create_pdf_preview(file_path)
-        preview_url = f"{unique_folder_name}/{preview_filename}"
-        
+        preview_path = f"{unique_folder_name}/{preview_filename}"
+        preview_url = preview_path
     except Exception as e:
         print("Error generating preview image:", e)
         preview_url = "https://via.placeholder.com/150"
         
-    socketio.emit("upload_status", {"message": "Processing PDF chunks...","book_id": book_id})
+    socketio.emit("progress_update", {"message": "Processing PDF chunks..."})
 
 
+    # Extract and process chunks
     chunks_with_sources = process_and_get_chunks(file_path, unique_folder_name, filename)
 
     def save_chunks_to_csv(chunks_with_sources, book_folder, book_name):
@@ -88,20 +88,19 @@ def upload_pdf():
 
     save_chunks_to_csv(chunks_with_sources, book_folder, book_name)
     
-    socketio.emit("upload_status", {"message": "Chunks saved, sending to LLM...", "book_id": book_id})
+    socketio.emit("progress_update", {"message": "Chunks saved, sending to LLM..."})
     
     
     return send_chunks_to_llm(
-        book_id,
         os.path.join(book_folder, f"{book_name}.csv"), 
-        book_folder, book_name, user_id, filename, preview_url,file_path, unique_folder_name
+        book_folder, book_name, user_id, filename, preview_url, unique_folder_name
     )
 
-# ***************************************************** Send Chunks to the LLM *****************************************************
+# -----------------------------------------------------Send Chunks to the LLM one by one------------------------------------------------
 
 
 
-def send_chunks_to_llm(book_id, csv_file_path, book_folder, book_name, user_id, filename, preview_url, file_path, unique_folder_name):
+def send_chunks_to_llm(csv_file_path, book_folder, book_name, user_id, filename, preview_url, unique_folder_name):
     """ Sends CSV data as an SSE request and processes responses in real time. """
     csv_file_path = os.path.join(book_folder, f"{book_name}.csv")
 
@@ -110,35 +109,36 @@ def send_chunks_to_llm(book_id, csv_file_path, book_folder, book_name, user_id, 
     total_chunks_csv = 0
     with open(csv_file_path, "r", encoding="utf-8") as file:
         reader = csv.reader(file)
-        next(reader)  
+        next(reader)  # Skip header row
         total_chunks_csv = sum(1 for _ in reader)     
 
-    socketio.emit("upload_status", {
+    # ✅ STEP 2: Emit Total Chunks Count to WebSocket
+    socketio.emit("progress_update", {
         "message": f"Total {total_chunks_csv} chunks identified.",
         "total_chunks": total_chunks_csv,
-        "progress": 0,
-        "book_id": book_id
+        "progress": 0
     })
     
+    # ✅ **STEP 3: Send Chunks to LLM & Emit Real-time Progress**
     with open(csv_file_path, "r", encoding="utf-8") as file:
         csv_content = file.read()   
     
     data = {"supporting_data": csv_content}  
-    headers = {"Content-Type": "application/json"}
+    headers = {"Content-Type": "application/json","x-api-key": "qwerty"}
 
     structured_data = []
     structured_data_filename = f"{book_name}_structured.json"
     structured_data_path = os.path.join(book_folder, structured_data_filename)
 
     try:
-        response = requests.post(os.getenv("LLM_URL"), json=data, headers=headers, stream=True, timeout=30)
-
+        response = requests.post(LLM_URL, json=data, headers=headers, stream=True, timeout=30)
+        print("✅ LLM connection successful!",response)
         if response.status_code == 200:
             print("✅ Model connection successful!")
-            socketio.emit("upload_status", {"message": "✅ Model connection successful!","book_id": book_id})
+            socketio.emit("progress_update", {"message": "✅ Model connection successful!"})
         else:
             print(f"⚠️ Model connection failed: {response.status_code} - {response.text}")
-            socketio.emit("upload_status", {"message": f"⚠️ Model connection failed: {response.status_code}","book_id": book_id})
+            socketio.emit("progress_update", {"message": f"⚠️ Model connection failed: {response.status_code}"})
             return jsonify({"error": "Failed to connect to the model"}), 500
 
     # except requests.exceptions.Timeout:
@@ -157,19 +157,19 @@ def send_chunks_to_llm(book_id, csv_file_path, book_folder, book_name, user_id, 
             json_file.write("[")  
 
             first_entry = True
-            total_chunks = 0
-            start_time = time.time()
+            total_chunks = 0  # ✅ Track number of received chunks
+            start_time = time.time()  # ✅ Track time
             processed_chunks = 0
             
             print("\n📡 Waiting for response...\n")
-            socketio.emit("progress_update", {"message": "Processing started...", "progress": 0,"book_id": book_id})
+            socketio.emit("progress_update", {"message": "Processing started...", "progress": 0})
 
             for line in response.iter_lines():
                 if line:
                     decoded_line = line.decode("utf-8").replace("data: ", "").strip()
                     try:
-                        print(f"📥 Model Response: {decoded_line}") 
-                        socketio.emit("model_response", {"chunk": decoded_line},room=book_id)
+                        print(f"📥 Model Response: {decoded_line}")  # ✅ Log every received response
+                        socketio.emit("model_response", {"chunk": decoded_line})  # ✅ Emit each response to frontend
 
                         chunk_response = json.loads(decoded_line)
                         structured_data.append(chunk_response)
@@ -184,60 +184,61 @@ def send_chunks_to_llm(book_id, csv_file_path, book_folder, book_name, user_id, 
                         
                         progress_percent = int((processed_chunks / total_chunks_csv) * 100) if total_chunks_csv > 0 else 0
 
+
+
+                        # ✅ Emit Real-Time Progress to UI
                         socketio.emit("progress_update", {
                             "message": f"Processing chunk {processed_chunks}/{total_chunks_csv}...",
-                            "progress": progress_percent,
-                            "book_id":book_id
+                            "progress": progress_percent
                         })
 
                         sys.stdout.write(f"\r🚀 Received {total_chunks} chunks...")
                         sys.stdout.flush()
 
                     except json.JSONDecodeError:
-                        print(f"{decoded_line}")
+                        print(f"\n❌ Error decoding JSON: {decoded_line}")
 
-            json_file.write("]")
+            json_file.write("]")  # Close JSON array
 
-            end_time = time.time()
+            end_time = time.time()  # ✅ Capture end time
             print(f"\n✅ Done! Received {total_chunks} chunks in {end_time - start_time:.2f} seconds.")
 
             socketio.emit("progress_update", {
                 "message": f"✅ Processing completed! Total {total_chunks} chunks processed.",
-                "progress": 100,
-                "book_id": book_id
+                "progress": 100
             })
 
         print(f"✅ Structured data successfully saved to {structured_data_path}")
 
     except requests.exceptions.RequestException as e:
-        socketio.emit("progress_update", {"message": "Error communicating with LLM", "progress": -1, "book_id": book_id})
+        socketio.emit("progress_update", {"message": "Error communicating with LLM", "progress": -1})
         return jsonify({"error": f"Error communicating with LLM: {str(e)}"}), 500     
+
+    # ✅ NOW Save Record to MongoDB (AFTER JSON is fully written)
     try:
-        
+        book_id = str(ObjectId())
         upload_record = {
             "_id": book_id,
             "user_id": user_id,
             "filename": filename,
             "folder_name": unique_folder_name,
-            "fileUrl":file_path,
             "upload_time": datetime.utcnow(),
             "preview_url": preview_url,
             "structured_data_path": structured_data_path  
         }
 
-        result = mongo.db.uploads.insert_one(upload_record)
-        print("✅ MongoDB record saved successfully:",book_id, result.inserted_id)
+        result = mongo.db.uploads.insert_one(upload_record)  # ✅ Fix: Execute MongoDB insert
+        print("✅ MongoDB record saved successfully:", result.inserted_id)
     
     except Exception as e:
         print(f"❌ Error inserting into MongoDB: {e}")
-        socketio.emit("progress_update", {"message": "Database save failed", "progress": -1,"book_id": book_id})
+        socketio.emit("progress_update", {"message": "Database save failed", "progress": -1})
         return jsonify({"error": "Failed to save data in the database"}), 500
 
-    
-    socketio.emit("completed", {
+    # ✅ Notify UI that everything is completed
+    socketio.emit("progress_update", {
         "message": "✅ File processing & storage complete!",
-        "progress": 100,
-        "book_id": book_id
+        "progress": 100
     })
 
     return jsonify({
@@ -248,19 +249,14 @@ def send_chunks_to_llm(book_id, csv_file_path, book_folder, book_name, user_id, 
     }), 200  
 
 # --------------------------------------------------------------------Function for Data Routes----------------------------------------------------------------------
+    # structured_data_response = get_excel_data()
+    # return structured_data_response 
+
 
 @bp.route("/uploads/<path:file_path>")
 def serve_file(file_path):
     full_path = os.path.join(current_app.config["UPLOAD_FOLDER"], file_path)
-    
-    if not os.path.exists(full_path):
-        return jsonify({"error": "File not found"}), 404
-    
     return send_from_directory(os.path.dirname(full_path), os.path.basename(full_path))
-
-def serialize_document(doc):
-    """Convert MongoDB ObjectId to string in a document"""
-    doc["_id"] = str(doc["_id"])  
 
 @bp.route("/upload-history", methods=["GET"])
 @jwt_required()
@@ -284,15 +280,15 @@ def get_upload_history():
         book["book_id"] = str(book["_id"])
         
         if "folder_name" in book and book["folder_name"]:
-            book["fileUrl"] = f"{book['folder_name']}/{book['filename']}"
+            book["fileUrl"] = f"{BASE_URL}{book['folder_name']}/{book['filename']}"
             
         if "preview_url" in book and book["preview_url"]:
-            book["preview_url"] = f"{book['preview_url']}"
+            book["preview_url"] = f"{BASE_URL}{book['preview_url']}"
             
         
         if "structured_data_path" in book and book["structured_data_path"]:
             structured_data_filename = os.path.basename(book["structured_data_path"])
-            book["structuredDataUrl"] = f"{os.getenv('BASE_URL')}{book['folder_name']}/{structured_data_filename}"
+            book["structuredDataUrl"] = f"{BASE_URL}{book['folder_name']}/{structured_data_filename}"
             
             
 

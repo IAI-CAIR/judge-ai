@@ -1,44 +1,8 @@
-# === BACKEND (Flask) ===
-backend/**/__pycache__/  
-backend/env/
-backend/*.pyc
-backend/*.pyo
-backend/*.db
-backend/.env
-backend/.env.local
-backend/.env.*.local
-backend/instance/
-backend/logs/
-backend/app/uploads/ 
-
-# === FRONTEND (React) ===
-frontend/node_modules/
-frontend/.env
-frontend/.env.local
-frontend/.env.*.local
-frontend/build/
-frontend/dist/
-frontend/.next/
-frontend/.turbo/
-frontend/yarn-error.log
-frontend/npm-debug.log
-frontend/.parcel-cache/
-
-# === GENERAL PROJECT IGNORE ===
-/node_modules/  # If there's a package.json in the root
-/.env
-/.env.local
-/.env.*.local
-/.DS_Store
-/Thumbs.db
-/logs/
-/*.log
-
-# === IDE & Editor Files ===
-.vscode/
-.idea/
-*.iml
-# ------------------------------------------------------------------- LLM --------------------------------------------------------------------------
-LLM/model
-LLM/__pycache__
-LLM/**/*.json
+judgeAI-Frontend/node_modules/
+backend/app/__pycache__
+backend/app/helpers/__pycache__/
+backend/app/models/__pycache__/
+backend/app/routes/__pycache__/
+backend/app/uploads/*
+backend/app/utils/__pycache__/
+github-recovery-codes.txt

@@ -3,35 +3,16 @@ import axios from "axios";
 import { FaSearch, FaBars, FaComments, FaBookOpen, FaHistory } from "react-icons/fa";
 import { TbSquareToggle } from "react-icons/tb";
 import { api } from "../api/api";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-
 
 const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
-  const location = useLocation();
-  const [selectedBookId, setSelectedBookId] = useState(null);
-
-  useEffect(() => {
-    if (location.state?.book_id) {
-      setSelectedBookId(location.state.book_id);
-    }
-  }, [location.state?.book_id]);
-
-  // useEffect(() => {
-  //   const latestBookId = localStorage.getItem("latestBookId");
-  //   if (latestBookId) {
-  //     setSelectedBookId(latestBookId);
-  //   }
-  // }, []);
-  
-
   const fetchUploadHistory = async () => {
     const token = localStorage.getItem("token");
     if (!token) throw new Error("No token found. Please log in.");
-    
 
     const { data } = await axios.get(`${api}/api/upload-history`, {
       headers: { Authorization: `Bearer ${token}` },
@@ -48,12 +29,12 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
   const filteredHistory = history.filter((item) =>
     item.filename.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  // console.log("filteredHistory", filteredHistory);
-
+  console.log("filteredHistory", filteredHistory);
+  
   if (isCollapsed) {
     return (
       <button
-        className="p-2 bg-blue-800 text-white fixed top-4 left-4 rounded-full z-20"
+        className="p-2 bg-cyan-800 text-white fixed top-4 left-4 rounded-full z-20"
         onClick={() => setIsCollapsed(false)}
       >
         <FaBars />
@@ -77,7 +58,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
         ) : (
           <FaSearch
             size={30}
-            className="text-blue-600 cursor-pointer hover:bg-gray-200 rounded-full p-1"
+            className="text-cyan-600 cursor-pointer hover:bg-gray-200 rounded-full p-1"
             title="Search"
             onClick={() => setIsSearchOpen(true)}
           />
@@ -85,7 +66,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
 
         <button
           onClick={() => setIsCollapsed(true)}
-          className="text-blue-600 hover:bg-gray-300 rounded p-1"
+          className="text-cyan-600 hover:bg-gray-300 rounded p-1"
           title="Close Sidebar"
         >
           <TbSquareToggle size={30} />
@@ -94,7 +75,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
 
       <button
         onClick={() => (window.location.href = "/dashboard")}
-        className="mb-4 p-2 bg-blue-500 text-white rounded flex items-center gap-2 hover:bg-blue-600"
+        className="mb-4 p-2 bg-cyan-500 text-white rounded flex items-center gap-2 hover:bg-cyan-600"
       >
         <FaComments /> New Chat
       </button>
@@ -112,27 +93,13 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
           filteredHistory.map((item, index) => (
             <div
               key={index}
-              className={`p-2 rounded mb-1 cursor-pointer truncate 
-                ${selectedBookId === item.book_id ? "border border-blue-500 border-dashed font-bold bg-blue-400" : "bg-gray-100"}
-              `}
-              
-              onClick={() => {
-                setSelectedBookId(item.book_id);
-                navigate("/excelViewer", {
-                  state: {
-                    structuredDataUrl: item.structuredDataUrl,
-                    book_id: item.book_id,
-                    filename: item.filename,
-                    fileUrl: item.fileUrl
-                  }
-                });
-              }}
-
+              className="p-2 bg-gray-100 rounded mb-2 hover:bg-gray-200 cursor-pointer truncate"
+              onClick={() => navigate("/excelViewer", { state: { structuredDataUrl: item.structuredDataUrl, book_id: item.book_id } })}
             >
               <a
                 href={item.structuredDataUrl}
                 rel="noopener noreferrer"
-                className="block bg-gray-100 rounded  cursor-pointer truncate"
+                className="block p-2 bg-gray-100 rounded mb-2 hover:bg-gray-200 cursor-pointer truncate"
               >
                 {item.filename} - {new Date(item.upload_time).toLocaleString()}
               </a>

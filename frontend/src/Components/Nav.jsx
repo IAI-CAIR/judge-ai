@@ -51,23 +51,23 @@ const NavBar = () => {
   return (
     <header className="w-full p-4 pt-0 flex justify-between items-center">
       <img
-        src="../src/assets/graphiti1.png"
+        src="../src/assets/logo.png"
         alt="Graphiti Multimedia"
-        className="h-24 w-auto object-contain"
+        className="h-14 w-auto object-contain"
       />
        <div
           onClick={openProfileModal}
           className="cursor-pointer flex justify-center items-center"
         >
           {showInitials ? (
-            <div className="w-8 h-8 rounded-full flex items-center justify-center bg-blue-600 text-white">
+            <div className="w-8 h-8 rounded-full flex items-center justify-center bg-cyan-600 text-white">
               {initials}
             </div>
           ) : (
             <img
               src={avatar}
               alt="Profile"
-              className="w-8 h-8 rounded-full border-2 border-blue-600 object-cover"
+              className="w-8 h-8 rounded-full border-2 border-cyan-600 object-cover"
             />
           )}
         </div>

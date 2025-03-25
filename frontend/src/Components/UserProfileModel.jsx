@@ -52,7 +52,7 @@ const UserProfileModal = ({ userProfile: initialUserProfile, closeProfileModal }
   }
 
   return (
-    <div className="fixed top-4 right-4 z-100 w-80 bg-white rounded-lg shadow-xl p-4 opacity-100 transition-all">
+    <div className="fixed top-4 right-4 z-50 w-80 bg-white rounded-lg shadow-xl p-4 opacity-100 transition-all">
       <div className="relative">
         <button
           onClick={closeProfileModal}
@@ -65,7 +65,7 @@ const UserProfileModal = ({ userProfile: initialUserProfile, closeProfileModal }
         <img
           src={userProfile?.avatar || `https://ui-avatars.com/api/?name=${userProfile?.name || "User"}&size=128`} 
           alt={userProfile?.name || "User Avatar"}
-          className="w-16 h-16 rounded-full mb-2 border-2 border-blue-500"
+          className="w-16 h-16 rounded-full mb-2 border-2 border-cyan-500"
         />
 
 
@@ -77,7 +77,7 @@ const UserProfileModal = ({ userProfile: initialUserProfile, closeProfileModal }
           <button
             onClick={() => setActiveTab("details")}
             className={`flex-1 py-2 px-4 text-center ${
-              activeTab === "details" ? "bg-blue-500 text-white" : "bg-gray-200"
+              activeTab === "details" ? "bg-cyan-500 text-white" : "bg-gray-200"
             }`}
           >
             <FaUser className="inline-block mr-2" />
@@ -86,7 +86,7 @@ const UserProfileModal = ({ userProfile: initialUserProfile, closeProfileModal }
           <button
             onClick={() => setActiveTab("preferences")}
             className={`flex-1 py-2 px-4 text-center ${
-              activeTab === "preferences" ? "bg-blue-500 text-white" : "bg-gray-200"
+              activeTab === "preferences" ? "bg-cyan-500 text-white" : "bg-gray-200"
             }`}
           >
             <FaCog className="inline-block mr-2" />
@@ -110,7 +110,7 @@ const UserProfileModal = ({ userProfile: initialUserProfile, closeProfileModal }
             <div>
               <label className="block text-sm font-medium text-gray-700">Notifications</label>
               <div className="mt-1 flex items-center">
-                <input type="checkbox" className="h-4 w-4 text-blue-600 border-gray-300 rounded" />
+                <input type="checkbox" className="h-4 w-4 text-cyan-600 border-gray-300 rounded" />
                 <label className="ml-2 text-sm text-gray-900">Receive email notifications</label>
               </div>
             </div>
@@ -126,7 +126,7 @@ const UserProfileModal = ({ userProfile: initialUserProfile, closeProfileModal }
           </button>
           <button
             onClick={closeProfileModal}
-            className="bg-blue-500 text-white py-1 px-3 rounded-md text-sm"
+            className="bg-cyan-500 text-white py-1 px-3 rounded-md text-sm"
           >
             Close
           </button>

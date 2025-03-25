@@ -1,5 +1,5 @@
-from flask import Blueprint, request, jsonify, render_template
-from flask_jwt_extended import create_access_token,jwt_required, get_jwt_identity
+from flask import Blueprint, request, jsonify
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from google.oauth2 import id_token
 from ..models.user import User
 from ..helpers.validation_helpers import is_valid_email
@@ -10,9 +10,12 @@ import traceback
 
 bp = Blueprint("auth", __name__, url_prefix="/api")
 
-@bp.route("/hello", methods=["GET"])
+
+@bp.route("/", methods=["GET"])
 def index():
-     return jsonify({"message": "Hello, World!"})
+    return jsonify({"message": "Hello, World!"}), 200
+
+
 @bp.route("/register", methods=["POST"])
 def register():
     data = request.get_json()
@@ -48,7 +51,8 @@ def login():
         return jsonify({"message": "Invalid credentials"}), 401
 
     access_token = create_access_token(identity=str(user["_id"]))
-    return jsonify({"access_token": access_token, "message": "Logged in successfully"}), 200
+    return jsonify({"access_token": access_token, "message": "Logged in successfully", "user": user["email"]}), 200
+
 
 @bp.route("/protected", methods=["GET"])
 @jwt_required()
@@ -60,6 +64,7 @@ def protected():
         return jsonify({"message": "User not found"}), 404
 
     return jsonify({"message": "Access granted", "user": {"email": user["email"]}}), 200
+
 
 @bp.route("/checkLogged", methods=["GET"])
 @jwt_required()
@@ -74,8 +79,8 @@ def check_logged():
         "status": 200,
         "message": "Logged In",
         "user": {
-            "email": user["email"], 
-            "name": user.get("name"), 
+            "email": user["email"],
+            "name": user.get("name"),
             "avatar": user.get("avatar")
         }
     }), 200
@@ -101,8 +106,8 @@ def google_login():
 
         try:
             credentials = id_token.verify_oauth2_token(
-                id_token_str, 
-                Request(), 
+                id_token_str,
+                Request(),
                 "364205782321-tcdg1lfsn9psg8c6qft9pv1mlp9tv2j9.apps.googleusercontent.com"
             )
         except ValueError as e:
