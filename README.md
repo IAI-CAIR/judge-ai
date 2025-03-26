@@ -1,4 +1,4 @@
-![template](https://github.com/user-attachments/assets/f11091e8-2623-425d-8674-3a4a3eda8dd2)
+[![Watch the video](https://github.com/user-attachments/assets/f11091e8-2623-425d-8674-3a4a3eda8dd2)](https://youtu.be/RK4yPHXeOj4?si=_DqwSP-ceD7CAlue)
 <br>
 <p align="center">The greatest place of legal analysis tool Judge AI is an open-source system designed to enhance legal information retrieval by combining structured data extraction and conversational access. Utilising Natural Language Processing (NLP) and Large Language Models (LLMs), It extracts key information from legal case files into a structured format, enabling more accurate and efficient searches.</p>
 
