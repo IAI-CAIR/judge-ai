@@ -10,7 +10,7 @@
 
 **Judge AI (JAi)** is an **open-source project** dedicated to enhancing legal information retrieval. It achieves this by integrating **structured data extraction** with **conversational access** to legal documents . This system harnesses the power of **Natural Language Processing (NLP)** and **Large Language Models (LLMs)** to efficiently process legal case files. JAi aims to alleviate the challenges faced by legal professionals in navigating vast collections of unstructured legal documents . By providing a more efficient and accessible way to retrieve relevant legal information, JAi has the potential to optimise legal operations .
 
-Have a look on our work: [![Youtube Link](https://youtu.be/RK4yPHXeOj4?si=Lz7603zTUvGqS_AA)]
+Have a look on our work: [Youtube Link](https://youtu.be/RK4yPHXeOj4?si=Lz7603zTUvGqS_AA)
 ## Features
 
 - **Structured Extraction**: Converts legal documents into consistent JSON format using NLP and LLMs
