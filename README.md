@@ -6,12 +6,25 @@
 ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/IAI-CAIR/judge-ai)
 ![GitHub License](https://img.shields.io/github/license/IAI-CAIR/judge-ai)
 
-## Overview
+## Table of Contents
+
+1. [Overview](#overview)
+2. [Features](#features)
+3. [Benefits](#benefits)
+4. [Directory Structure](#directory-structure)
+5. [Getting Started](#getting-started)
+6. [Usage](#usage)
+7. [Evaluation Test Data](#evaluation-test-data)
+8. [Contributing](#contributing)
+9. [License](#license)
+10. [Contact](#contact)
+
+# Overview
 
 **Judge AI (JAi)** is an **open-source project** dedicated to enhancing legal information retrieval. It achieves this by integrating **structured data extraction** with **conversational access** to legal documents . This system harnesses the power of **Natural Language Processing (NLP)** and **Large Language Models (LLMs)** to efficiently process legal case files. JAi aims to alleviate the challenges faced by legal professionals in navigating vast collections of unstructured legal documents . By providing a more efficient and accessible way to retrieve relevant legal information, JAi has the potential to optimise legal operations .
 
 Have a look on our work: [Youtube Link](https://youtu.be/RK4yPHXeOj4?si=Lz7603zTUvGqS_AA)
-## Features
+# Features
 
 - **Structured Extraction**: Converts legal documents into consistent JSON format using NLP and LLMs
 - **Chat Interface**: Intuitive document upload and search capabilities
@@ -19,14 +32,14 @@ Have a look on our work: [Youtube Link](https://youtu.be/RK4yPHXeOj4?si=Lz7603zT
 - **Research Efficiency**: Reduces manual effort in legal precedent identification
 - **Open-Source**: Available on GitHub for community collaboration
 
-## Benefits
+# Benefits
 
 - **Efficiency**: Automates document processing
 - **Accuracy**: Ensures precise data retrieval
 - **Simplicity**: Streamlines research via conversational access
 - **Accessibility**: Simplifies complex legal information
 
-## Directory Structure
+# Directory Structure
 
 ```
 ├── LLM           # Language model components
@@ -36,7 +49,7 @@ Have a look on our work: [Youtube Link](https://youtu.be/RK4yPHXeOj4?si=Lz7603zT
 └── README.md
 ```
 
-## Getting Started
+# Getting Started
 
 1. Clone repository:
    ```bash
@@ -87,7 +100,7 @@ Have a look on our work: [Youtube Link](https://youtu.be/RK4yPHXeOj4?si=Lz7603zT
   api=YOUR_BACKEND_API_URL
   ```
 
-## Evaluation Test Data
+# Evaluation 
 
 The **evaluation data** folder in the **backend** repository contains valuable feedback from MCA Data Science students (Student 1 to Student 11) who participated in testing the Judge AI system. This folder includes both case files and conversational data, which help assess the system's performance and accuracy.
 
@@ -107,15 +120,15 @@ The evaluation data is structured as follows:
     ├── cases-pdfs            # Legal case PDFs
     └── conversations        # Student-AI chat logs
 ```
-## Contributing
+# Contributing
 
 We welcome contributions! See the [contribution guidelines](https://github.com/pragyananda/judge-ai) for details.
 
-## License
+# License
 
 [MIT License](https://github.com/IAI-CAIR/judge-ai/blob/main/LICENSE) - See the LICENSE file for details.
 
-## Contact
+# Contact
 
 Open an issue or contact maintainers via GitHub: [IAI-CAIR/judge-ai](https://github.com/IAI-CAIR/judge-ai)
 
