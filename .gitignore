@@ -5,4 +5,5 @@ backend/app/models/__pycache__/
 backend/app/routes/__pycache__/
 backend/app/uploads/*
 backend/app/utils/__pycache__/
+frontend/node_modules/*
 github-recovery-codes.txt
