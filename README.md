@@ -87,6 +87,26 @@ Have a look on our work: [Youtube Link](https://youtu.be/RK4yPHXeOj4?si=Lz7603zT
   api=YOUR_BACKEND_API_URL
   ```
 
+## Evaluation Test Data
+
+The **evaluation data** folder in the **backend** repository contains valuable feedback from MCA Data Science students (Student 1 to Student 11) who participated in testing the Judge AI system. This folder includes both case files and conversational data, which help assess the system's performance and accuracy.
+
+The evaluation data is structured as follows:
+
+- **excel sheet**: This file contains detailed feedback provided by the students, including their reviews, ratings, and observations about the AI’s performance in understanding and processing legal cases.
+  
+- **casespdfs**: This folder contains various legal case documents in PDF format, which the students used to interact with the Judge AI system. These cases cover a range of legal topics and complexities, providing a comprehensive test for the tool’s capabilities.
+
+- **conversations**: This folder holds chat logs between the students and the AI. Each conversation corresponds to a specific case in the **casespdfs** folder. The students queried the system and provided feedback on how accurately and efficiently it responded to their inquiries.
+
+### evaluationFolder Structure
+
+```
+└── evaluation_data
+    ├── sheet.xlsx         # Student feedback data
+    ├── cases-pdfs            # Legal case PDFs
+    └── conversations        # Student-AI chat logs
+```
 ## Contributing
 
 We welcome contributions! See the [contribution guidelines](https://github.com/pragyananda/judge-ai) for details.
