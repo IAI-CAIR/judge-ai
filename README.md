@@ -102,7 +102,7 @@ Have a look on our work: [Youtube Link](https://youtu.be/RK4yPHXeOj4?si=Lz7603zT
 
 # Evaluation 
 
-The **evaluation data** folder in the **backend** repository contains valuable feedback from MCA Data Science students (Student 1 to Student 11) who participated in testing the Judge AI system. This folder includes both case files and conversational data, which help assess the system's performance and accuracy.
+The **evaluation** folder in repository contains valuable feedback from MCA Data Science students (Student 1 to Student 11) who participated in testing the Judge AI system. This folder includes both case files and conversational data, which help assess the system's performance and accuracy.
 
 The evaluation data is structured as follows:
 
@@ -115,8 +115,8 @@ The evaluation data is structured as follows:
 ### evaluationFolder Structure
 
 ```
-└── evaluation_data
-    ├── sheet.xlsx         # Student feedback data
+└── evaluation
+    ├── user_eval_&_feedback_summary.xlsx         # Student feedback data
     ├── cases-pdfs            # Legal case PDFs
     └── conversations        # Student-AI chat logs
 ```
