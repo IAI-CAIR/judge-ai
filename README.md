@@ -100,7 +100,7 @@ Have a look on our work: [Youtube Link](https://youtu.be/RK4yPHXeOj4?si=Lz7603zT
   api=YOUR_BACKEND_API_URL
   ```
 
-# Evaluation Test Data
+# Evaluation 
 
 The **evaluation data** folder in the **backend** repository contains valuable feedback from MCA Data Science students (Student 1 to Student 11) who participated in testing the Judge AI system. This folder includes both case files and conversational data, which help assess the system's performance and accuracy.
 
